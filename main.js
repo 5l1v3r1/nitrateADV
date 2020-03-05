@@ -5,13 +5,7 @@ const { default: { get } } = require('axios'),
     Logger = require("@ayana/logger"),
     { redeem, add, remove } = require("./Functions")
 
-require("./CustomLogger");
-this.logger = Logger.get("Nitro")
-
-
 let tokens = fs.readFileSync("./tokens.txt", "utf8").replace(/\r/, "").split('\n');
-
-let config = JSON.parse(fs.readFileSync("./config.json", "utf8"))
 
 let count = 0;
 
@@ -44,14 +38,14 @@ for (token of tokens) {
                 code = message.content.split("https://discord.gift/").pop().replace(/\s+/g, " ").split(' ')[0];
 
                 if (repeated.includes(code)) {
-                    this.logger.info(`${code} - Already attempted`, null, { invalid: true, ...message });
+                    console.log(chalk.redBright("INVALID") + `${code} - Already attempted`);
                     return;
                 }
 
                 let res = await get("https://discordapp.com/api/v6/entitlements/gift-codes/" + code + "?with_application=true&with_subscription_plan=true").catch(O_o => { })
 
                 if (!res || res.status == 404 || res.status == "404" || res.data === "Unkown Gift Code") {
-                    return this.logger.info(`${code}`, null, { invalid: true, ...message });
+                    console.log(chalk.redBright("INVALID") + `${code} - Already attempted`);
                 }
 
                 console.log(1)
@@ -67,14 +61,14 @@ for (token of tokens) {
                 code = message.content.split("https://discordapp.com/gifts/").pop().replace(/\s+/g, " ").split(' ')[0];
 
                 if (repeated.includes(code)) {
-                    this.logger.info(`${code} - Already attempted`, null, { invalid: true, ...message })
+                    console.log(chalk.redBright("INVALID") + `${code} - Already attempted`);
                     return;
                 }
 
                 let res = await get("https://discordapp.com/api/v6/entitlements/gift-codes/" + code + "?with_application=true&with_subscription_plan=true").catch(O_o => { })
 
                 if (!res || res.status == 404 || res.status == "404" || res.data === "Unkown Gift Code") {
-                    return this.logger.info(`${code}`, null, { invalid: true, ...message });
+                    console.log(chalk.redBright("INVALID") + `${code} - Already attempted`);
                 }
 
                 console.log(1)

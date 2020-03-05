@@ -1,7 +1,7 @@
 const fs = require("fs");
 const { default: { post } } = require('axios');
 const notifier = require("node-notifier")
-let config = JSON.parse(fs.readFileSync("src/config.json", "utf8"))
+let config = JSON.parse(fs.readFileSync("./config.json", "utf8"))
 
 
 module.exports = {
@@ -18,12 +18,12 @@ module.exports = {
         }).then(body => {
 
             if (!body || body.status == 404 || body.status == "404" || body.data === "Unkown Gift Code") {
-                return this.logger.info(`${code}`, null, { invalid: true, ...msg });
+                return console.log(chalk.redBright("INVALID") + `${code} - Already attempted`);
             }
 
             var result = JSON.parse(body.data);
             var responseTime = new Date() - start;
-            this.logger.info(`${result.message} (${responseTime / 1000}s)`, null, { invalid: false, ...message });
+            console.log(chalk.green("VALID") + `${result.message} (${responseTime / 1000}s)`);
 
             notifier.notify({
                 title: 'Nitrate',
