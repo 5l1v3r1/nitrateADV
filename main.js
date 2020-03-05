@@ -9,9 +9,9 @@ require("./CustomLogger");
 this.logger = Logger.get("Nitro")
 
 
-let tokens = fs.readFileSync("src/tokens.txt", "utf8").replace(/\r/, "").split('\n');
+let tokens = fs.readFileSync("./tokens.txt", "utf8").replace(/\r/, "").split('\n');
 
-let config = JSON.parse(fs.readFileSync("src/config.json", "utf8"))
+let config = JSON.parse(fs.readFileSync("./config.json", "utf8"))
 
 let count = 0;
 
