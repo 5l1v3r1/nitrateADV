@@ -94,10 +94,12 @@ for (token of tokens) {
     })
 
     // login witth the scouts
-    bot.login(token).catch(function (error) {
+    try {
+        bot.login(token)
+    } catch (err) {
         continue;
-        console.log(error.message);
-    });
+        console.log(" Couldn't log into token " + token)
+    }
 
 
 
