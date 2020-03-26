@@ -10,9 +10,6 @@ let count = 0;
 let repeatedCodes = [];
 
 for (token of tokens) {
-
-    console.log(token)
-
     const bot = new Client();
     bot.on("ready", () => {
         console.log(`Logged in as: ${chalk.yellow(bot.user.tag)}\nEmail: ${chalk.bold(bot.user.email)}\nID: ${chalk.bold(bot.user.id)}\n\n`);
@@ -84,6 +81,7 @@ for (token of tokens) {
     try {
         bot.login(token)
     } catch (err) {
+        '';
         continue;
     }
 }
