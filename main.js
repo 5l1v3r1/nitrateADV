@@ -8,8 +8,6 @@ const { default: { post } } = require('axios'),
 let tokens = fs.readFileSync("./tokens.txt", "utf8").replace(/\r/, "").split('\n');
 let count = 0;
 let repeatedCodes = [];
-let repeatedInvites = [];
-let blackListedInvites = fs.readFileSync("./blacklistedInvites.txt", 'utf8').replace(/\r/, "").split('\n');
 
 for (token of tokens) {
 
@@ -22,6 +20,9 @@ for (token of tokens) {
     });
     bot.on("message", async (message) => {
         try {
+
+            blackListedInvites = fs.readFileSync("./blacklistedInvites.txt", 'utf8').replace(/\r/, "").split('\n');
+
 
             if ( config.joinServers ) {
                 let invites = message.content.match(/(discord.gg|discordapp.com\/invites)\/\w+/gi);
@@ -37,10 +38,9 @@ for (token of tokens) {
                         code = urls.split('/')[1]
                     }
 
-                    if ( repeatedInvites.includes(code) ) return;
                     if (blackListedInvites.filter(s => s.includes(code))) return;
 
-                    repeatedInvites.push(code)
+                    fs.appendFileSync('blacklistedInvites.txt', `\n${urls}`, 'utf8');
 
                     await post(`https://discordapp.com/api/v6/invites/${code}`, {}, {
                         headers: {
