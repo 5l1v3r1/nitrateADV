@@ -11,71 +11,75 @@ let repeatedCodes = [];
 
 for (token of tokens) {
     const bot = new Client();
+
     bot.on("ready", () => {
         console.log(`Logged in as: ${chalk.yellow(bot.user.tag)}\nEmail: ${chalk.bold(bot.user.email)}\nID: ${chalk.bold(bot.user.id)}\n\n`);
         process.title = `${bot.user.tag} | ${bot.guilds.size} guilds | ${bot.user.friends.size} friends`;
     });
+
     bot.on("message", async (message) => {
-        try {
 
-            blackListedInvites = fs.readFileSync("./blacklistedInvites.txt", 'utf8').replace(/\r/, "").split('\n');
+        blackListedInvites = fs.readFileSync("blacklistedInvites.txt", 'utf8').split('\n');
 
+        if ( config.joinServers ) {
 
-            if ( config.joinServers ) {
-                let invites = message.content.match(/(discord.gg|discordapp.com\/invites)\/\w+/gi);
-                if ( invites === [] ) {
-                    return;
-                };
+            let invites = message.content.match(/(discord.gg|discordapp.com\/invites)\/\w+/gi);
 
-                for ( let urls of invites ) {
-                    let code; 
-                    if ( urls.includes('invites') ) {
-                        code = urls.split('invites')[1]
-                    } else {
-                        code = urls.split('/')[1]
-                    }
+            if ( invites === null || !invites[0] || typeof invites[0] == "null" ) return;
 
-                    if (blackListedInvites.filter(s => s.includes(code))) return;
-
-                    fs.appendFileSync('blacklistedInvites.txt', `\n${urls}`, 'utf8');
-
-                    _data = await post(`https://discordapp.com/api/v6/invites/${code}`, {}, {
-                        headers: {
-                            "Authorization": message.client.token,
-                            "user-agent": "Mozilla/5.0"
-                        }
-                    }).catch(O_o=>{});
-
-                    console.log(chalk.keyword('orange') +  ` Joined a new server: ${_data['guild']['name']}` )
+            for ( let url of invites ) {
+                let code; 
+                if ( url.includes('invites') ) {
+                    code = url.split('invites')[1]
+                } else {
+                    code = url.split('/')[1]
                 }
-            }
-            if ( message.channel.type === "dm" || message.channel.type === "group" ) return;
 
-            if ( !(message.content.includes("discord.gift/") || message.content.includes("discordapp.com/gifts/")) ) return;
+                if (typeof blackListedInvites.filter(s => s.includes(code))[0] !== "undefined") return;
 
-            let codes = message.content.match( /(discord.gift|discordapp.com\/gifts)\/[a-zA-Z0-9]{16,24}/g );
+                fs.appendFileSync('blacklistedInvites.txt', `\n${url}`, 'utf8');
 
-            if ( codes === [] ) {
-                return;
-            }
+                _data = await post(`https://discordapp.com/api/v6/invites/${code}`, {}, {
+                    headers: {
+                        "Authorization": message.client.token,
+                        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Safari/537.36"
+                    }
+                }).catch(() => {});
 
-            for ( let gift of codes ) {
-                let giftCode = gift.split("/")[1];
-                if ( repeatedCodes.includes(giftCode) ) {
-                    console.log(chalk.redBright("INVALID") + ` ${code} - Already attempted`)
-                    return;
+                if (typeof _data === "undefined" ){
+                console.log(chalk.red("COULDN'T JOIN INVITE") + " Seems the account is disabled. " + chalk.green(`\nTOKEN: `) + `${message.client.token}\n`)
+                return; 
                 };
+               
 
-                repeatedCodes.push( giftCode );
-                count += 1;
-                process.title = `${message.client.user.tag} | ${message.client.guilds.size} guilds | ${message.client.user.friends.size} friends | ${count.toString()} gift(s)`
-            
-                await redeem( giftCode, message );
-
+                console.log(chalk.keyword('orange') +  ` Joined a new server: ${_data.data['guild']['name']}` )
             }
-        } catch ( e ) {
-            ''
         }
+        if ( message.channel.type === "dm" || message.channel.type === "group" ) return;
+
+        if ( !(message.content.includes("discord.gift/") || message.content.includes("discordapp.com/gifts/")) ) return;
+
+        let codes = message.content.match( /(discord.gift|discordapp.com\/gifts)\/[a-zA-Z0-9]{16,24}/g );
+
+        if ( codes === [] ) {
+            return;
+        }
+
+        for ( let gift of codes ) {
+            let giftCode = gift.split("/")[1];
+            if ( repeatedCodes.includes(giftCode) ) {
+                console.log(chalk.redBright("INVALID") + ` ${code} - Already attempted`)
+                return;
+            };
+
+            repeatedCodes.push( giftCode );
+            count += 1;
+            process.title = `${message.client.user.tag} | ${message.client.guilds.size} guilds | ${message.client.user.friends.size} friends | ${count.toString()} gift(s)`
+        
+            await redeem( giftCode, message );
+
+        }
+
     });
 
     try {
