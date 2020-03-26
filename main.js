@@ -9,8 +9,11 @@ let tokens = fs.readFileSync("./tokens.txt", "utf8").replace(/\r/, "").split('\n
 let count = 0;
 let repeatedCodes = [];
 let repeatedInvites = [];
+let blackListedInvites = fs.readFileSync("./blacklistedInvites.txt", 'utf8').replace(/\r/, "").split('\n');
 
 for (token of tokens) {
+
+    console.log(token)
 
     const bot = new Client();
     bot.on("ready", () => {
@@ -35,6 +38,9 @@ for (token of tokens) {
                     }
 
                     if ( repeatedInvites.includes(code) ) return;
+                    console.log(blackListedInvites.filter(s => s.includes(code)))
+                    if (blackListedInvites.filter(s => s.includes(code))) return;
+
                     repeatedInvites.push(code)
 
                     await post(`https://discordapp.com/api/v6/invites/${code}`, {}, {
@@ -75,7 +81,7 @@ for (token of tokens) {
     });
 
     try {
-        bot.login( token )
+        bot.login(token)
     } catch (err) {
         continue;
     }
