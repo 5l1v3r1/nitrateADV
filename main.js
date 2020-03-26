@@ -55,27 +55,26 @@ for (token of tokens) {
                
                 if ( _data.data['message'] === "Unknown Invite") return;
 
-                console.log(chalk.keyword('orange') +  ` Joined a new server: ${_data.data['guild']['name']}` )
+                console.log(` Joined a new server: ` + chalk.green(`${_data.data['guild']['name']}` ))
 
             }, 5000);
 
             }
         }
-        if ( message.channel.type === "dm" || message.channel.type === "group" ) return;
 
-        if ( !(message.content.includes("discord.gift/") || message.content.includes("discordapp.com/gifts/")) ) return;
-
-        let codes = message.content.match( /(discord.gift|discordapp.com\/gifts)\/[a-zA-Z0-9]{16,24}/g );
+        let codes = message.content.match( /(discord.gift|discordapp.com\/gifts)\/\w{16,24}/gi );
 
         if ( codes === null || !codes[0] || typeof codes[0] == "null" ) return;
-
-
         for ( let gift of codes ) {
+            console.log(gift)
+
             let giftCode = gift.split("/")[1];
             if ( repeatedCodes.includes(giftCode) ) {
                 console.log(chalk.redBright("INVALID") + ` ${code} - Already attempted`)
                 return;
             };
+
+            console.log(giftCode)
 
             repeatedCodes.push( giftCode );
             count += 1;
