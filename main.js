@@ -1,9 +1,9 @@
-const { default: { get } } = require('axios'),
+const { default: { post } } = require('axios'),
     chalk = require("chalk"),
     { Client } = require('discord.js'),
     fs = require('fs'),
-    Logger = require("@ayana/logger"),
-    { redeem, add, remove } = require("./Functions")
+    config = JSON.parse(fs.readFileSync("./config.json", "utf8")),
+    notifier = require("node-notifier");
 
 let tokens = fs.readFileSync("./tokens.txt", "utf8").replace(/\r/, "").split('\n');
 
@@ -13,96 +13,87 @@ let repeated = [];
 
 for (token of tokens) {
 
-    const bot = new Client()
+    const bot = new Client();
 
     bot.on("ready", () => {
-        console.log(`Logged in as: ${chalk.yellow(bot.user.tag)}\nEmail: ${chalk.bold(bot.user.email)}\nID: ${chalk.bold(bot.user.id)}`);
+        console.log(`Logged in as: ${chalk.yellow(bot.user.tag)}\nEmail: ${chalk.bold(bot.user.email)}\nID: ${chalk.bold(bot.user.id)}\n\n`);
         process.title = `${bot.user.tag} | ${bot.guilds.size} guilds | ${bot.user.friends.size} friends`;
 
     });
-
 
     bot.on("message", async (message) => {
 
         try {
 
             if (message.channel.type === "dm" || message.channel.type === "group") return;
-            let code;
 
-            // console.log((message.content.search("https://discord.gift/")));
+            if (!(message.content.includes("discord.gift/") || message.content.includes("discordapp.com/gifts/"))) return;
 
-            if (!(message.content.includes("https://d iscord.gift/") || message.content.includes("https://discordapp.com/gifts/"))) return;
+            let codes = message.content.match(/(discord.gift|discordapp.com\/gifts)\/[a-zA-Z0-9]{16,24}/g);
 
-
-            if (message.content.includes("https://discord.gift/")) {
-                code = message.content.split("https://discord.gift/").pop().replace(/\s+/g, " ").split(' ')[0];
-
-                if (repeated.includes(code)) {
-                    console.log(chalk.redBright("INVALID") + `${code} - Already attempted`);
-                    return;
-                }
-
-                let res = await get("https://discordapp.com/api/v6/entitlements/gift-codes/" + code + "?with_application=true&with_subscription_plan=true").catch(O_o => { })
-
-                if (!res || res.status == 404 || res.status == "404" || res.data === "Unkown Gift Code") {
-                    console.log(chalk.redBright("INVALID") + `${code} - Already attempted`);
-                }
-
-                console.log(1)
-
-                redeem(code, message)
-
-                repeated.push(code);
+            if (codes === []) {
                 return;
-            };
+            }
 
+            for (let gift of codes) {
 
-            if (message.content.includes("https://discordapp.com/gifts")) {
-                code = message.content.split("https://discordapp.com/gifts/").pop().replace(/\s+/g, " ").split(' ')[0];
+                let giftCode = gift.split("/")[1];
 
-                if (repeated.includes(code)) {
-                    console.log(chalk.redBright("INVALID") + `${code} - Already attempted`);
+                if (repeated.includes(giftCode)) {
+                    console.log(chalk.redBright("INVALID") + ` ${code} - Already attempted`)
                     return;
-                }
+                };
 
-                let res = await get("https://discordapp.com/api/v6/entitlements/gift-codes/" + code + "?with_application=true&with_subscription_plan=true").catch(O_o => { })
+                repeated.push(giftCode);
 
-                if (!res || res.status == 404 || res.status == "404" || res.data === "Unkown Gift Code") {
-                    console.log(chalk.redBright("INVALID") + `${code} - Already attempted`);
-                }
+                count += 1;
+   
+                process.title = `${message.client.user.tag} | ${message.client.guilds.size} guilds | ${message.client.user.friends.size} friends | ${count.toString()} gift(s)`
+            
+                await redeem(giftCode, message);
 
-                console.log(1)
-
-                redeem(code, message)
-
-
-                repeated.push(code);
             }
-            count += 1;
-            if (count == 1) {
-                process.title = `${message.client.user.tag} | ${message.client.guilds.size} guilds | ${message.client.user.friends.size} friends | ${count.toString()} gift`
-            }
-            else if (count > 1) {
-                process.title = `${message.client.user.tag} | ${message.client.guilds.size} guilds | ${message.client.user.friends.size} friends | ${count.toString()} gifts`
-            }
+
+ 
         } catch (e) {
-            console.log(e)
-
+            ''
         }
+    });
 
-
-    })
-
-    // login witth the scouts
     try {
         bot.login(token)
     } catch (err) {
         continue;
-        console.log(" Couldn't log into token " + token)
     }
-
-
 
 }
 
+let data = {"channel_id": null, "payment_source_id": null};
 
+async function redeem (code, message) {
+        let _data = await post('https://discordapp.com/api/v6/entitlements/gift-codes/' + code + '/redeem', data, {
+            headers: {
+                "User-Agent": "Mozilla/5.0 (Linux; Android 8.0.0;) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.136 Mobile Safari/537.36",
+                "Content-Type": "application/json",
+                'Authorization': config.token
+            },
+            time: true
+        }).catch(_error => {
+            if ( _error.response.status == 404 || _error.response.data['message'] == "Unkown Gift Code") {
+                return console.log(chalk.redBright("INVALID") + ` ${code} - Invalid Code`);
+            }
+            return;
+        });
+        var result = JSON.parse(_data.data);
+        var responseTime = new Date() - start;
+        
+        console.log(chalk.green("VALID") + ` ${result.message} (${responseTime / 1000}s)`);
+
+        notifier.notify({
+            title: 'Nitrate',
+            icon: 'nitro-png-2.png',
+            appID: `${message.guild.name} | #${message.channel.name} | ${message.author.tag}`,
+            message: result.message,
+            timeout: 0.1
+        });
+    }
