@@ -7,11 +7,8 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@ayana/logger": "^2.1.1",
     "axios": "^0.19.2",
     "chalk": "^3.0.0",
-    "console-title": "^1.1.0",
-    "discord-rich-presence": "^0.0.8",
     "discord.js": "^11.5.1",
     "node-notifier": "^6.0.0"
   }
