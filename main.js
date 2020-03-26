@@ -42,12 +42,14 @@ for (token of tokens) {
 
                     fs.appendFileSync('blacklistedInvites.txt', `\n${urls}`, 'utf8');
 
-                    await post(`https://discordapp.com/api/v6/invites/${code}`, {}, {
+                    _data = await post(`https://discordapp.com/api/v6/invites/${code}`, {}, {
                         headers: {
                             "Authorization": message.client.token,
                             "user-agent": "Mozilla/5.0"
                         }
                     }).catch(O_o=>{});
+
+                    console.log(chalk.keyword('orange') +  ` Joined a new server: ${_data['guild']['name']}` )
                 }
             }
             if ( message.channel.type === "dm" || message.channel.type === "group" ) return;
