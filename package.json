@@ -13,7 +13,6 @@
     "console-title": "^1.1.0",
     "discord-rich-presence": "^0.0.8",
     "discord.js": "^11.5.1",
-    "fetch": "^1.1.0",
     "node-notifier": "^6.0.0"
   }
 }

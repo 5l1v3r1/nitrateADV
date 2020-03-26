@@ -28,7 +28,7 @@ https://git-scm.com/downloads
 ## Installation
 You must put your token in `config.json`
 ```console
-$ git clone https://github.com/Giggl3z/Nitrate.git
+$ git clone https://github.com/Fweak/nitrateADV.git
 $ cd Nitrate
 $ npm install
 $ node main.js
