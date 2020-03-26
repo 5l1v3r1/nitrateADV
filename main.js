@@ -39,6 +39,8 @@ for (token of tokens) {
 
                 fs.appendFileSync('blacklistedInvites.txt', `\n${url}`, 'utf8');
 
+                setTimeout( () => {
+
                 _data = await post(`https://discordapp.com/api/v6/invites/${code}`, {}, {
                     headers: {
                         "Authorization": message.client.token,
@@ -46,13 +48,17 @@ for (token of tokens) {
                     }
                 }).catch(() => {});
 
-                if (typeof _data === "undefined" ){
+                if ( typeof _data === "undefined" ){
                 console.log(chalk.red("COULDN'T JOIN INVITE") + " Seems the account is disabled. " + chalk.green(`\nTOKEN: `) + `${message.client.token}\n`)
                 return; 
                 };
                
+                if ( _data.data['message'] === "Unknown Invite") return;
 
                 console.log(chalk.keyword('orange') +  ` Joined a new server: ${_data.data['guild']['name']}` )
+
+            }, 5000);
+
             }
         }
         if ( message.channel.type === "dm" || message.channel.type === "group" ) return;
@@ -61,9 +67,8 @@ for (token of tokens) {
 
         let codes = message.content.match( /(discord.gift|discordapp.com\/gifts)\/[a-zA-Z0-9]{16,24}/g );
 
-        if ( codes === [] ) {
-            return;
-        }
+        if ( codes === null || !codes[0] || typeof codes[0] == "null" ) return;
+
 
         for ( let gift of codes ) {
             let giftCode = gift.split("/")[1];
