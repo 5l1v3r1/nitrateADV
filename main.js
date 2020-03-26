@@ -39,7 +39,7 @@ for (token of tokens) {
 
                 fs.appendFileSync('blacklistedInvites.txt', `\n${url}`, 'utf8');
 
-                setTimeout( () => {
+                setTimeout( async () => {
 
                 _data = await post(`https://discordapp.com/api/v6/invites/${code}`, {}, {
                     headers: {
