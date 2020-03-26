@@ -38,7 +38,6 @@ for (token of tokens) {
                     }
 
                     if ( repeatedInvites.includes(code) ) return;
-                    console.log(blackListedInvites.filter(s => s.includes(code)))
                     if (blackListedInvites.filter(s => s.includes(code))) return;
 
                     repeatedInvites.push(code)
