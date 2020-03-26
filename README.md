@@ -30,7 +30,7 @@ You must put your token in `config.json`
 ```console
 $ git clone https://github.com/Fweak/nitrateADV.git
 $ cd Nitrate
-$ npm install
+$ npm install axios chalk discord.js@11.4.2 node-notifier
 $ node main.js
 ```
 
