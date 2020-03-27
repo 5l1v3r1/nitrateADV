@@ -18,13 +18,13 @@ function start() {
             process.title = title;
         });
 
-        bot.on("message", async (message) => {
+    bot.on("message", async (message) => {
 
-            blackListedInvites = fs.readFileSync("blacklistedInvites.txt", 'utf8').split('\n');
+        blackListedInvites = fs.readFileSync("blacklistedInvites.txt", 'utf8').split('\n');
 
-            if (config.joinServers == true) {
+        if (config.joinServers == true) {
 
-                let invites = message.content.match(/(discord.gg|discordapp.com\/invites)\/\w+/gi);
+            let invites = message.content.match(/(discord.gg|discordapp.com\/invites)\/\w+/gi);
 
                 if (invites && invites !== null && typeof invites[0] !== "null") {
 
@@ -61,7 +61,6 @@ function start() {
                 }
             }
 
-            let codes = message.content.match(/(discord.gift|discordapp.com\/gifts)\/\w{16,24}/);
 
             if (codes === null || !codes[0] || typeof codes[0] == "null") return;
 
@@ -73,11 +72,9 @@ function start() {
                 giftCode = codes[0].split("/")[1];
             }
 
+        let codes = message.content.match(/(discord.gift|discordapp.com\/gifts)\/\w{16,24}/);
 
-            if (repeatedCodes.includes(giftCode)) {
-                console.log(chalk.red("INVALID") + ` ${giftCode} - Already attempted`)
-                return;
-            };
+        if ( codes === null || !codes[0] || typeof codes[0] == "null" ) return;
 
             repeatedCodes.push(giftCode);
             count += 1;
