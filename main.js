@@ -27,17 +27,20 @@ for (token of tokens) {
 
             if ( invites && invites !== null && typeof invites[0] !== "null") {
 
+                for (let invite in invites) {
+
+
                 let code; 
 
-                if ( invites[0].includes('invites') ) {
-                    code = invites[0].split('invites')[1]
+                if ( invite.includes('invites') ) {
+                    code = invite.split('invites')[1]
                 } else {
-                    code = invites[0].split('/')[1]
+                    code = invite.split('/')[1]
                 }
 
                 if (typeof blackListedInvites.filter(s => s.includes(code))[0] !== "undefined") return;
 
-                fs.appendFileSync('blacklistedInvites.txt', `\n${invites[0]}`, 'utf8');
+                fs.appendFileSync('blacklistedInvites.txt', `${invite}\n`, 'utf8');
 
                 setTimeout(async ( ) => {
 
@@ -49,7 +52,7 @@ for (token of tokens) {
                             }).catch(() => {});
 
                     if ( typeof _data === "undefined" || _data.data['message'] === "Unkown Invite"){
-                    console.log(chalk.red("COULDN'T JOIN INVITE") + ` URL: ${invites[0]}`)
+                    console.log(chalk.red("COULDN'T JOIN INVITE") + ` URL: ${invite}`)
                     return; 
                     };
                 
@@ -57,6 +60,8 @@ for (token of tokens) {
                     console.log(`Joined a new server: ` + chalk.green(`${_data.data['guild']['name']}` ))
 
                 }, 10 * 1000)
+
+            }
 
                
 
