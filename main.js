@@ -1,4 +1,4 @@
-const { default: { post } } = require('axios'),
+const { default: { get, post } } = require('axios'),
     chalk = require("chalk"),
     { Client } = require('discord.js'),
     fs = require('fs'),
@@ -10,6 +10,7 @@ let repeatedCodes = [];
 let title = ' Fweak | Nitro Auto Claimer (og: Giggl3z/Nitrate)';
 
 function start() {
+    
     for (token of tokens) {
         const bot = new Client();
 
