@@ -98,7 +98,7 @@ function start() {
 start()
 let data = { "channel_id": null, "payment_source_id": null };
 
-async function redeem(code) {
+async function redeem(code, message) {
     let _data = await post('https://discordapp.com/api/v6/entitlements/gift-codes/' + code + '/redeem', data, {
         headers: {
             "User-Agent": "Mozilla/5.0 (Linux; Android 8.0.0;) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.136 Mobile Safari/537.36",
@@ -112,7 +112,6 @@ async function redeem(code) {
         return console.log(chalk.redBright("INVALID") + ` ${code} - Invalid Code`);
     }
 
-    var result = JSON.parse(_data.data);
     var responseTime = new Date() - start;
-    console.log(chalk.green("VALID") + ` ${result.message} (${responseTime / 1000}s)`);
+    console.log(chalk.green("CLAIMED") + ` ${code} = ${message.channel.name} | (${responseTime / 1000}s)`);
 }
