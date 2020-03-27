@@ -46,12 +46,11 @@ for (token of tokens) {
                     }
                 }).catch(() => {});
 
-                if ( typeof _data === "undefined"){
-                console.log(chalk.red("COULDN'T JOIN INVITE") + " Seems the account is disabled. " + chalk.green(`\nTOKEN: `) + `${message.client.token}\n`)
+                if ( typeof _data === "undefined" || _data.data['message'] === "Unkown Invite"){
+                console.log(chalk.red("COULDN'T JOIN INVITE") + ` URL: ${invites[0]}`)
                 return; 
                 };
-            
-                if ( _data.data['message'] === "Unknown Invite") return;
+        
 
                 console.log(` Joined a new server: ` + chalk.green(`${_data.data['guild']['name']}` ))
 
