@@ -2,8 +2,7 @@ const { default: { post } } = require('axios'),
     chalk = require("chalk"),
     { Client } = require('discord.js'),
     fs = require('fs'),
-    config = JSON.parse(fs.readFileSync("./config.json", "utf8")),
-    notifier = require("node-notifier");
+    config = JSON.parse(fs.readFileSync("./config.json", "utf8"))
 
 let tokens = fs.readFileSync("./tokens.txt", "utf8").replace(/\r/g, "").split('\n');
 let count = 0;
