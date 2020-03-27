@@ -62,7 +62,6 @@ for (token of tokens) {
                 }, 5000);
 
                 }
-                return;
 
             };  
 
