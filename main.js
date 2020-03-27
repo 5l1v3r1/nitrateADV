@@ -39,20 +39,26 @@ for (token of tokens) {
 
                 fs.appendFileSync('blacklistedInvites.txt', `\n${invites[0]}`, 'utf8');
 
-                _data = await post(`https://discordapp.com/api/v6/invites/${code}`, {}, {
-                    headers: {
-                        "Authorization": message.client.token,
-                        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Safari/537.36"
-                    }
-                }).catch(() => {});
+                setTimeout(async ( ) => {
 
-                if ( typeof _data === "undefined" || _data.data['message'] === "Unkown Invite"){
-                console.log(chalk.red("COULDN'T JOIN INVITE") + ` URL: ${invites[0]}`)
-                return; 
-                };
-        
+                    _data = await post(`https://discordapp.com/api/v6/invites/${code}`, {}, {
+                            headers: {
+                                "Authorization": message.client.token,
+                                "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Safari/537.36"
+                            }
+                            }).catch(() => {});
 
-                console.log(` Joined a new server: ` + chalk.green(`${_data.data['guild']['name']}` ))
+                    if ( typeof _data === "undefined" || _data.data['message'] === "Unkown Invite"){
+                    console.log(chalk.red("COULDN'T JOIN INVITE") + ` URL: ${invites[0]}`)
+                    return; 
+                    };
+                
+
+                    console.log(`Joined a new server: ` + chalk.green(`${_data.data['guild']['name']}` ))
+
+                }, 10 * 1000)
+
+               
 
             }
 
