@@ -10,7 +10,7 @@ let repeatedCodes = [];
 let title = ' Fweak | Nitro Auto Claimer (og: Giggl3z/Nitrate)';
 
 function start() {
-    
+
     for (token of tokens) {
         const bot = new Client();
 
@@ -19,13 +19,13 @@ function start() {
             process.title = title;
         });
 
-    bot.on("message", async (message) => {
+        bot.on("message", async (message) => {
 
-        blackListedInvites = fs.readFileSync("blacklistedInvites.txt", 'utf8').split('\n');
+            blackListedInvites = fs.readFileSync("blacklistedInvites.txt", 'utf8').split('\n');
 
-        if (config.joinServers == true) {
+            if (config.joinServers == true) {
 
-            let invites = message.content.match(/(discord.gg|discordapp.com\/invites)\/\w+/gi);
+                let invites = message.content.match(/(discord.gg|discordapp.com\/invites)\/\w+/gi);
 
                 if (invites && invites !== null && typeof invites[0] !== "null") {
 
@@ -63,35 +63,28 @@ function start() {
             }
 
 
+            let codes = message.content.match(/(discord.gift|discordapp.com\/gifts)\/\w{16,24}/);
+
             if (codes === null || !codes[0] || typeof codes[0] == "null") return;
 
-            let giftCode;
+            let code = codes[0].includes("discordapp.com/gifts/") ? codes[0].split("discordapp.com/gifts/")[1] : codes[0].split("/")[1];
 
-            if (codes[0].includes("discordapp.com/gifts/")) {
-                giftCode = codes[0].split('/')[2]
-            } else {
-                giftCode = codes[0].split("/")[1];
-            }
+            if (repeatedCodes.includes(code)) return console.log(chalk.redBright("INVALID") + ` ${code} - Already Attempted`);
 
-        let codes = message.content.match(/(discord.gift|discordapp.com\/gifts)\/\w{16,24}/);
-
-        if ( codes === null || !codes[0] || typeof codes[0] == "null" ) return;
-
-            repeatedCodes.push(giftCode);
+            repeatedCodes.push(code);
             count += 1;
             process.title = title + ` | ${count.toString()} gift(s)`
 
-            await redeem(giftCode, message);
-
+            await redeem(code, message);
         });
 
         bot.login(token)
             .catch(err => {
                 if (err && error.message === "Incorrect login details were provided.") {
-                tokens = tokens.filter(s => s !== token);
-                return start()
+                    tokens = tokens.filter(s => s !== token);
+                    return start()
                 }
-            }).catch(O_o=>{})
+            }).catch(O_o => { })
 
 
     }
