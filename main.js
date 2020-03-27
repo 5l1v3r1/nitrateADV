@@ -18,81 +18,71 @@ for (token of tokens) {
     });
 
     bot.on("message", async (message) => {
-        try{ 
 
-            if ( config.joinServers === true ) {
+        blackListedInvites = fs.readFileSync("blacklistedInvites.txt", 'utf8').split('\n');
 
-                blackListedInvites = fs.readFileSync("blacklistedInvites.txt", 'utf8').split('\n');
+        if (config.joinServers == true) {
 
-                let invites = message.content.match(/(discord.gg|discordapp.com\/invites)\/\w+/gi);
+            let invites = message.content.match(/(discord.gg|discordapp.com\/invites)\/\w+/gi);
 
-                if ( invites === null || !invites[0] || typeof invites[0] == "null" ) return;
+            if ( invites && invites !== null && typeof invites[0] !== "null") {
 
-                for ( let url of invites ) {
+                let code; 
 
-                    let code; 
-                    if ( url.includes('invites') ) {
-                        code = url.split('invites')[1]
-                    } else {
-                        code = url.split('/')[1]
-                    }
-
-                    if (typeof blackListedInvites.filter(s => s.includes(code))[0] !== "undefined") return;
-
-                    fs.appendFileSync('blacklistedInvites.txt', `\n${url}`, 'utf8');
-
-                    setTimeout( async () => {
-
-                    _data = await post(`https://discordapp.com/api/v6/invites/${code}`, {}, {
-                        headers: {
-                            "Authorization": message.client.token,
-                            "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Safari/537.36"
-                        }
-                    }).catch(() => {});
-
-                    if ( typeof _data === "undefined" ){
-                    console.log(chalk.red("COULDN'T JOIN INVITE") + " Seems the account is disabled. " + chalk.green(`\nTOKEN: `) + `${message.client.token}\n`)
-                    return; 
-                    };
-                    
-                    if ( _data.data['message'] === "Unknown Invite") return;
-
-                    console.log(` Joined a new server: ` + chalk.green(`${_data.data['guild']['name']}` ))
-
-                }, 5000);
-
+                if ( invites[0].includes('invites') ) {
+                    code = invites[0].split('invites')[1]
+                } else {
+                    code = invites[0].split('/')[1]
                 }
 
-            };  
+                if (typeof blackListedInvites.filter(s => s.includes(code))[0] !== "undefined") return;
 
+                fs.appendFileSync('blacklistedInvites.txt', `\n${invites[0]}`, 'utf8');
 
-            let codes = message.content.match(/(discord.gift|discordapp.com\/gifts)\/\w{16,24}/);
+                _data = await post(`https://discordapp.com/api/v6/invites/${code}`, {}, {
+                    headers: {
+                        "Authorization": message.client.token,
+                        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Safari/537.36"
+                    }
+                }).catch(() => {});
 
-            if ( codes === null || !codes[0] || typeof codes[0] == "null" ) return;
-
-            let giftCode;
+                if ( typeof _data === "undefined"){
+                console.log(chalk.red("COULDN'T JOIN INVITE") + " Seems the account is disabled. " + chalk.green(`\nTOKEN: `) + `${message.client.token}\n`)
+                return; 
+                };
             
-            if (codes[0].includes("discordapp.com/gifts/")) {
-                giftCode = codes[0].split('/')[2]
-            } else {
-                giftCode = codes[0].split("/")[1];
+                if ( _data.data['message'] === "Unknown Invite") return;
+
+                console.log(` Joined a new server: ` + chalk.green(`${_data.data['guild']['name']}` ))
+
             }
 
-
-            if (repeatedCodes.includes(giftCode)) {
-                console.log(chalk.red("INVALID") + ` ${giftCode} - Already attempted`)
-                return;
-            };
-
-            repeatedCodes.push(giftCode);
-            count += 1;
-            process.title = `${message.client.user.tag} | ${message.client.guilds.size} guilds | ${message.client.user.friends.size} friends | ${count.toString()} gift(s)`
-        
-            await redeem(giftCode, message);
-
-        } catch (err) {
-            console.error(err)
         }
+
+
+        let codes = message.content.match(/(discord.gift|discordapp.com\/gifts)\/\w{16,24}/);
+
+        if ( codes === null || !codes[0] || typeof codes[0] == "null" ) return;
+
+        let giftCode;
+        
+        if (codes[0].includes("discordapp.com/gifts/")) {
+            giftCode = codes[0].split('/')[2]
+        } else {
+            giftCode = codes[0].split("/")[1];
+        }
+
+
+        if (repeatedCodes.includes(giftCode)) {
+            console.log(chalk.red("INVALID") + ` ${giftCode} - Already attempted`)
+            return;
+        };
+
+        repeatedCodes.push(giftCode);
+        count += 1;
+        process.title = `${message.client.user.tag} | ${message.client.guilds.size} guilds | ${message.client.user.friends.size} friends | ${count.toString()} gift(s)`
+    
+        await redeem(giftCode, message);
 
     });
 
