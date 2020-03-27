@@ -27,23 +27,20 @@ for (token of tokens) {
 
             if ( invites && invites !== null && typeof invites[0] !== "null") {
 
-                for (let invite in invites) {
+            invites.forEach((invite, i) => {
+                setTimeout(async () => {
 
+                    let code; 
 
-                let code; 
-
-                if ( invite.includes('invites') ) {
-                    code = invite.split('invites')[1]
-                } else {
-                    code = invite.split('/')[1]
-                }
-
-                if (typeof blackListedInvites.filter(s => s.includes(code))[0] !== "undefined") return;
-
-                fs.appendFileSync('blacklistedInvites.txt', `${invite}\n`, 'utf8');
-
-                setTimeout(async ( ) => {
-
+                    if ( invite.includes('invites') ) {
+                        code = invite.split('invites')[1]
+                    } else {
+                        code = invite.split('/')[1]
+                    }
+    
+                    if (typeof blackListedInvites.filter(s => s.includes(code))[0] !== "undefined") return;
+    
+                    fs.appendFileSync('blacklistedInvites.txt', `${invite}\n`, 'utf8');
                     _data = await post(`https://discordapp.com/api/v6/invites/${code}`, {}, {
                             headers: {
                                 "Authorization": message.client.token,
@@ -59,11 +56,10 @@ for (token of tokens) {
 
                     console.log(`Joined a new server: ` + chalk.green(`${_data.data['guild']['name']}` ))
 
-                }, 10 * 1000)
 
-            }
 
-               
+                  }, i * 3000);
+            })
 
             }
 
