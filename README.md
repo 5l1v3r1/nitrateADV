@@ -1,11 +1,6 @@
 # Nitro Auto Redeemer
 
-### Automatically redeem nitro gifts sent across all of your servers.
-
-![Gift Redeemer](https://cdn.discordapp.com/attachments/645899747969728512/646063780622499843/image0.jpg)
-
-#### Notifications (New)
-![Notification](https://cdn.discordapp.com/attachments/640700265367994388/649105849708576778/unknown.png)
+### Automatically redeem nitro gifts sent across all of your tokens servers.
 
 ## Required
 
@@ -15,23 +10,18 @@
 
 https://nodejs.org/en/download/
 
-
-
-You probably will need npm.
-
-### npm
-https://www.npmjs.com/get-npm
-
 ### git
 https://git-scm.com/downloads
 
 ## Installation
-You must put your token in `config.json`
-```console
-$ git clone https://github.com/Fweak/nitrateADV.git
-$ cd Nitrate
-$ npm install axios chalk discord.js@11.4.2 node-notifier
-$ node main.js
-```
+__**You must put your main token in `config.json`**__
+### In " " are file/folder names
+
+**```console
+1. You download as zip and extract
+2. You then go to the "start" folder and run "installPkgs.bat"
+3. After its completed you then go to the "src" folder and input your tokens in "tokens.txt"
+4. After all completed go to "start" once again and run "runClaimer.bat"
+```**
 
 If you wish to contact me, join our telegram group:  http://t.me/nitroclaimer
