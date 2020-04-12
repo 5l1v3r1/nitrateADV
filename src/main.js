@@ -10,10 +10,11 @@ let repeatedCodes = fs.readFileSync("./Storage/codes.txt", "utf8").replace(/\r/g
 let title = ' Fweak | Nitro Auto Claimer (og: Giggl3z/Nitrate)';
 
 function start() {
+    process.title = title;
     for (token of tokens) {
         const bot = new Client();
 
-        bot.on("ready", () => process.title = title && console.log(`Logged in as: ${chalk.yellow(bot.user.tag)}\nEmail: ${chalk.bold(bot.user.email)}\nID: ${chalk.bold(bot.user.id)}\n\n`));
+        bot.on("ready", () => console.log(`Logged in as: ${chalk.yellow(bot.user.tag)}\nEmail: ${chalk.bold(bot.user.email)}\nID: ${chalk.bold(bot.user.id)}\n\n`));
 
         bot.on("message", async (message) => {
             let codes = message.content.match(/(discord.gift|discordapp.com\/gifts)\/\w{16,24}/);
