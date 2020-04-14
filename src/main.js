@@ -2,15 +2,19 @@ const { default: { post } } = require('axios'),
     chalk = require("chalk"),
     { Client } = require('discord.js'),
     fs = require('fs'),
-    config = require ("./config.json");
+    config = require("./config.json");
 
 let tokens = fs.readFileSync("./tokens.txt", "utf8").replace(/\r/g, "").split('\n');
 let count = 0;
-let repeatedCodes = fs.readFileSync("./Storage/codes.txt", "utf8").replace(/\r/g, "").split("\n");
 let title = ' Fweak | Nitro Auto Claimer (og: Giggl3z/Nitrate)';
+
+function codesList() {
+    return fs.readFileSync("./Storage/codes.txt", "utf8").replace(/\r/g, "").split("\n");
+}
 
 function start() {
     process.title = title;
+
     for (token of tokens) {
         const bot = new Client();
 
@@ -23,11 +27,11 @@ function start() {
 
             let code = codes[0].includes("discordapp.com/gifts/") ? codes[0].split("discordapp.com/gifts/")[1] : codes[0].split("/")[1];
 
-            if (repeatedCodes.includes(code)) return;
+            if (codesList().includes(code.trim()) === true) return;
 
             count += 1;
             process.title = title + ` | ${count.toString()} gift(s)`;
-            fs.appendFileSync("./Storage/codes.txt", code + "\n");
+            fs.appendFileSync("./Storage/codes.txt", code.trim() + "\n", { encoding: "utf8" });
             await redeem(code, message);
         });
 
@@ -36,6 +40,8 @@ function start() {
                 if (err && error.message === "Incorrect login details were provided.") {
                     tokens = tokens.filter(s => s !== token);
                     return start()
+                } else {
+                    console.log(err.message)
                 }
             });
     }
