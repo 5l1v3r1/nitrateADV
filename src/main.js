@@ -37,7 +37,7 @@ function start() {
 
         bot.login(token)
             .catch(err => {
-                if (err && error.message === "Incorrect login details were provided.") {
+                if (err && err.message === "Incorrect login details were provided.") {
                     tokens = tokens.filter(s => s !== token);
                     return start()
                 } else {
