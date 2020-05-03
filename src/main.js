@@ -25,6 +25,8 @@ function start() {
 
             if (codes === null || !codes[0] || typeof codes[0] == "null") return;
 
+            let startTimer = new Date();
+
             let code = codes[0].includes("discordapp.com/gifts/") ? codes[0].split("discordapp.com/gifts/")[1] : codes[0].split("/")[1];
 
             if (codesList().includes(code.trim()) === true) return;
@@ -32,7 +34,7 @@ function start() {
             count += 1;
             process.title = title + ` | ${count.toString()} gift(s)`;
             fs.appendFileSync("./Storage/codes.txt", code.trim() + "\n", { encoding: "utf8" });
-            await redeem(code, message);
+            await redeem(code, message, startTimer);
         });
 
         bot.login(token)
@@ -49,8 +51,7 @@ function start() {
 
 start()
 
-async function redeem(code, message) {
-
+async function redeem(code, message, start) {
     let _data = await post(`https://discordapp.com/api/v6/entitlements/gift-codes/${code}/redeem`, { "channel_id": null, "payment_source_id": null }, {
         headers: {
             "User-Agent": "Mozilla/5.0 (Linux; Android 8.0.0;) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.136 Mobile Safari/537.36",
@@ -59,7 +60,7 @@ async function redeem(code, message) {
         }
     }).catch(() => { });
 
-    if (typeof _data === "undefined") return console.log(chalk.redBright("INVALID") + ` ${code} - Invalid Code`);
+    if (typeof _data === "undefined") return console.log(chalk.redBright("INVALID") + ` ${code} - Invalid Code : .${(new Date() - start)}ms`);
 
-    console.log(chalk.green("CLAIMED") + ` ${code} = ${message.channel.name}`);
+    console.log(chalk.green("CLAIMED") + ` ${code} = ${message.channel.name} : .${(new Date() - start)}ms`);
 }
